@@ -71,22 +71,38 @@ namespace SimpleTaskList.Service
 
         public void MarkTask()
         {
-            throw new NotImplementedException();
+            IEnumerable<MyTask> unmarkList = GlobalList.TaskLists.Where(x => x.Status.Equals(MyTaskStatus.Pending));
+            Console.WriteLine(ToTable(unmarkList));
+            Console.WriteLine("Please input no to mark task");
+            Console.WriteLine("if want to mark multi task then input like 1, 2");
+            Console.Write("Task No");
+            var task_nos = Console.ReadLine();
+            if (!string.IsNullOrEmpty(task_nos))
+            {
+                string[] parts = task_nos.Replace(" ", "").Split(',');
+
+                var requestMarkList = unmarkList.Select((my_task, index) => new { MyTask = my_task, Index = (index + 1).ToString() })
+                    .Where(x => parts.Contains(x.Index)).Select(x => x.MyTask);
+                foreach (MyTask data in requestMarkList)
+                {
+                    data.Status = MyTaskStatus.Completed;
+                }
+            }
+            Console.WriteLine("Status marked");
         }
 
         public void ViewTask()
         {
-            Console.Write(GetAllAsTable());
+            Console.WriteLine(ToTable(GlobalList.TaskLists));
         }
 
-        public string GetAllAsTable()
+        public string ToTable(IEnumerable<MyTask> taskLists)
         {
-            var tl = GlobalList.TaskLists;
-            if (GlobalList.TaskLists.Count > 0)
+            if (taskLists.Count() > 0)
             {
                 var table = new Table("No", "Task", "Due Date", "Status");
                 int i = 0;
-                foreach (MyTask data in tl)
+                foreach (MyTask data in taskLists)
                 {
                     string Status = "";
                     if (data.Status == MyTaskStatus.Pending)
