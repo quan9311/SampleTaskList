@@ -1,9 +1,14 @@
-﻿using SimpleTaskList.Helper;
+﻿using BetterConsoles.Colors.Extensions;
+using BetterConsoleTables;
+using SimpleTaskList.Constants;
+using SimpleTaskList.Helper;
 using SimpleTaskList.Interface;
 using SimpleTaskList.Model;
 using SimpleTaskList.Model.Entities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,7 +76,35 @@ namespace SimpleTaskList.Service
 
         public void ViewTask()
         {
-            throw new NotImplementedException();
+            Console.Write(GetAllAsTable());
+        }
+
+        public string GetAllAsTable()
+        {
+            var tl = GlobalList.TaskLists;
+            if (GlobalList.TaskLists.Count > 0)
+            {
+                var table = new Table("No", "Task", "Due Date", "Status");
+                int i = 0;
+                foreach (MyTask data in tl)
+                {
+                    string Status = "";
+                    if (data.Status == MyTaskStatus.Pending)
+                    {
+                        Status = data.Status.ToString().ForegroundColor(Color.Red);
+                    }
+                    else
+                    {
+                        Status = data.Status.ToString().ForegroundColor(Color.Green);
+                    }
+                    table.AddRow((i += 1), data.TaskName, data.DueDate, Status);
+                }
+                return table.ToString();
+            }
+            else
+            {
+                return "Not record found!";
+            }
         }
     }
 }
