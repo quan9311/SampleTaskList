@@ -72,23 +72,30 @@ namespace SimpleTaskList.Service
         public void MarkTask()
         {
             IEnumerable<MyTask> unmarkList = GlobalList.TaskLists.Where(x => x.Status.Equals(MyTaskStatus.Pending));
-            Console.WriteLine(ToTable(unmarkList));
-            Console.WriteLine("Please input no to mark task");
-            Console.WriteLine("if want to mark multi task then input like 1, 2");
-            Console.Write("Task No");
-            var task_nos = Console.ReadLine();
-            if (!string.IsNullOrEmpty(task_nos))
+            if (unmarkList.Count() > 0)
             {
-                string[] parts = task_nos.Replace(" ", "").Split(',');
-
-                var requestMarkList = unmarkList.Select((my_task, index) => new { MyTask = my_task, Index = (index + 1).ToString() })
-                    .Where(x => parts.Contains(x.Index)).Select(x => x.MyTask);
-                foreach (MyTask data in requestMarkList)
+                Console.WriteLine(ToTable(unmarkList));
+                Console.WriteLine("Please input no to mark task");
+                Console.WriteLine("if want to mark multi task then input like 1, 2");
+                Console.Write("Task No");
+                var task_nos = Console.ReadLine();
+                if (!string.IsNullOrEmpty(task_nos))
                 {
-                    data.Status = MyTaskStatus.Completed;
+                    string[] parts = task_nos.Replace(" ", "").Split(',');
+
+                    var requestMarkList = unmarkList.Select((my_task, index) => new { MyTask = my_task, Index = (index + 1).ToString() })
+                        .Where(x => parts.Contains(x.Index)).Select(x => x.MyTask);
+                    foreach (MyTask data in requestMarkList)
+                    {
+                        data.Status = MyTaskStatus.Completed;
+                    }
                 }
+                Console.WriteLine("Task marked");
             }
-            Console.WriteLine("Status marked");
+            else
+            {
+                Console.WriteLine("No task to mark!");
+            }
         }
 
         public void ViewTask()
