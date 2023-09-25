@@ -10,6 +10,6 @@ namespace SimpleTaskList.Model
     public class GlobalList
     {
         //Create a global task list to store task
-        public static List<Tasks> TaskLists { get; set; } = new List<Tasks>();
+        public static List<MyTask> TaskLists { get; set; } = new List<MyTask>();
     }
 }
