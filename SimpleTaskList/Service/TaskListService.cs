@@ -93,7 +93,7 @@ namespace SimpleTaskList.Service
                         }
                         else
                         {
-                            Console.WriteLine($"{data} is not integer");
+                            Console.WriteLine($"{data} is not integer".ForegroundColor(Color.Red));
                         }
                     }
 
@@ -102,7 +102,7 @@ namespace SimpleTaskList.Service
                     foreach (MyTask data in requestMarkList)
                     {
                         data.Status = MyTaskStatus.Completed;
-                        Console.WriteLine($"Task {data.TaskName} has been mark as completed");
+                        Console.WriteLine($"Task {data.TaskName} has been mark as completed".ForegroundColor(Color.Green));
                     }
                 }
             }
@@ -140,7 +140,7 @@ namespace SimpleTaskList.Service
                         backToMenu = true;
                         break;
                     default:
-                        Console.WriteLine("Invalid choice. Please try again.");
+                        Console.WriteLine("Invalid choice. Please try again.".ForegroundColor(Color.Red));
                         break;
                 }
 
@@ -291,17 +291,17 @@ namespace SimpleTaskList.Service
                         i -= 1;
                         try
                         {
-                            Console.WriteLine($"Task {GlobalList.TaskLists.ElementAt(i).TaskName} has been deleted");
+                            Console.WriteLine($"Task {GlobalList.TaskLists.ElementAt(i).TaskName} has been deleted".ForegroundColor(Color.Green));
                             GlobalList.TaskLists.RemoveAt(i);
                         }
                         catch (ArgumentOutOfRangeException)
                         {
-                            Console.WriteLine($"{data} is not existed");
+                            Console.WriteLine($"{data} is not existed".ForegroundColor(Color.Red));
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"{data} is not integer");
+                        Console.WriteLine($"{data} is not integer".ForegroundColor(Color.Red));
                     }
                 }
             }
