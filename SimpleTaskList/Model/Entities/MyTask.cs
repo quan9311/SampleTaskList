@@ -2,7 +2,7 @@
 
 namespace SimpleTaskList.Model.Entities
 {
-    public class Tasks
+    public class MyTask
     {
         public string TaskName { get; set; }
         public DateTime DueDate { get; set; }
