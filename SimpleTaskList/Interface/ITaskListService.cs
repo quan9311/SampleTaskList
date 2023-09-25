@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleTaskList.Model.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,7 @@ namespace SimpleTaskList.Interface
         void ViewTask();
         void AddTask();
         void MarkTask();
+        void DeleteTask();
+        string ToTable(IEnumerable<MyTask> t);
     }
 }

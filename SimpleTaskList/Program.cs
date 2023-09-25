@@ -22,7 +22,8 @@ class Program
             Console.WriteLine("1. View Task");
             Console.WriteLine("2. Add Task");
             Console.WriteLine("3. Marking Task");
-            Console.WriteLine("4. Exit");
+            Console.WriteLine("4. Delete Task");
+            Console.WriteLine("5. Exit");
 
             // Get user input
             Console.Write("Enter your choice: ");
@@ -41,6 +42,9 @@ class Program
                     tlm.MarkTask();
                     break;
                 case "4":
+                    tlm.DeleteTask();
+                    break;
+                case "5":
                     Environment.Exit(0);
                     break;
                 default:

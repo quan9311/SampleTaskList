@@ -4,7 +4,6 @@ namespace SimpleTaskList.Model.Entities
 {
     public class MyTask
     {
-        public string Index { get; set; }
         public string TaskName { get; set; }
         public DateTime DueDate { get; set; }
         //using MyTaskStatus as variable name because TaskStatus is existing in System.Threading.Tasks

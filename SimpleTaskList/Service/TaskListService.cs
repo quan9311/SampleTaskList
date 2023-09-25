@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -78,20 +79,32 @@ namespace SimpleTaskList.Service
                 Console.WriteLine(ToTable(unmarkList));
                 Console.WriteLine("Please input no to mark task");
                 Console.WriteLine("if want to mark multi task then input like 1, 2");
-                Console.Write("Task No");
+                Console.Write("Task No: ");
                 var task_nos = Console.ReadLine();
                 if (!string.IsNullOrEmpty(task_nos))
                 {
-                    string[] parts = task_nos.Replace(" ", "").Split(',');
+                    string[] datas = task_nos.Replace(" ", "").Split(',');
+                    List<int> ints = new List<int>();
+                    foreach(var data in datas)
+                    {
+                        if (Int32.TryParse(data, out int i))
+                        {
+                            ints.Add(i);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{data} is not integer");
+                        }
+                    }
 
-                    var requestMarkList = unmarkList.Select((my_task, index) => new { MyTask = my_task, Index = (index + 1).ToString() })
-                        .Where(x => parts.Contains(x.Index)).Select(x => x.MyTask);
+                    var requestMarkList = unmarkList.Select((my_task, index) => new { MyTask = my_task, Index = (index + 1) })
+                        .Where(x => ints.Contains(x.Index)).Select(x => x.MyTask);
                     foreach (MyTask data in requestMarkList)
                     {
                         data.Status = MyTaskStatus.Completed;
+                        Console.WriteLine($"Task {data.TaskName} has been mark as completed");
                     }
                 }
-                Console.WriteLine("Task marked");
             }
             else
             {
@@ -259,6 +272,39 @@ namespace SimpleTaskList.Service
             }
             Console.WriteLine(ToTable(taskLists));
             return taskLists;
+        }
+
+        public void DeleteTask()
+        {
+            Console.WriteLine(ToTable(GlobalList.TaskLists));
+            Console.WriteLine("Please insert no to delete: ");
+            Console.WriteLine("if want to delete multi task then input like 1, 2");
+            Console.Write("Task No: ");
+            var task_nos = Console.ReadLine();
+            if (!string.IsNullOrEmpty(task_nos))
+            {
+                string[] datas = task_nos.Replace(" ", "").Split(',').OrderByDescending(item => item).ToArray();
+                foreach (string data in datas)
+                {
+                    if (Int32.TryParse(data, out int i))
+                    {
+                        i -= 1;
+                        try
+                        {
+                            Console.WriteLine($"Task {GlobalList.TaskLists.ElementAt(i).TaskName} has been deleted");
+                            GlobalList.TaskLists.RemoveAt(i);
+                        }
+                        catch (ArgumentOutOfRangeException)
+                        {
+                            Console.WriteLine($"{data} is not existed");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{data} is not integer");
+                    }
+                }
+            }
         }
     }
 }
