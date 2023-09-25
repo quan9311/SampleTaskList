@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SimpleTaskList.Service
 {
@@ -100,7 +101,37 @@ namespace SimpleTaskList.Service
 
         public void ViewTask()
         {
-            Console.WriteLine(ToTable(GlobalList.TaskLists));
+            IEnumerable<MyTask> taskList = GlobalList.TaskLists;
+            Console.WriteLine(ToTable(taskList));
+            bool backToMenu = false;
+            while (!backToMenu)
+            {
+                Console.WriteLine("1. Filter By");
+                Console.WriteLine("2. Order By");
+                Console.WriteLine("3. Reset");
+                Console.WriteLine("4. Back To Menu");
+                Console.Write("Enter your choice: ");
+                string choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        taskList = FilterBy(taskList);
+                        break;
+                    case "2":
+                        taskList = OrderBy(taskList);
+                        break;
+                    case "3":
+                        taskList = GlobalList.TaskLists;
+                        break;
+                    case "4":
+                        backToMenu = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice. Please try again.");
+                        break;
+                }
+
+            }
         }
 
         public string ToTable(IEnumerable<MyTask> taskLists)
@@ -120,7 +151,7 @@ namespace SimpleTaskList.Service
                     {
                         Status = data.Status.ToString().ForegroundColor(Color.Green);
                     }
-                    table.AddRow((i += 1), data.TaskName, data.DueDate, Status);
+                    table.AddRow((i += 1), data.TaskName, data.DueDate.ToString("yyyy-MM-dd"), Status);
                 }
                 return table.ToString();
             }
@@ -128,6 +159,106 @@ namespace SimpleTaskList.Service
             {
                 return "Not record found!";
             }
+        }
+
+        public IEnumerable<MyTask> FilterBy(IEnumerable<MyTask> taskLists)
+        {
+            Console.WriteLine("Filter By:");
+            Console.WriteLine("1: Task Name");
+            Console.WriteLine("2: Due Date");
+            Console.WriteLine("3: Status");
+            Console.Write("Choice:");
+            string choice = Console.ReadLine();
+            if (choice == "1")
+            {
+                Console.Write("Filter By Task Name:");
+                string filterByName = Console.ReadLine();
+                taskLists = taskLists.Where(x => x.TaskName.ToUpper().Contains(filterByName.ToUpper()));
+            }else if (choice == "2")
+            {
+                Console.Write("Filter By Due Date (From):");
+                string dateFrom = Console.ReadLine();
+                Console.Write("Filter By Due Date (To):");
+                string dateTo = Console.ReadLine();
+                if (!string.IsNullOrEmpty(dateFrom))
+                {
+                    if (RegexHelper.IsValidDateFormat(dateFrom, "yyyy-MM-dd"))
+                    {
+                        taskLists = taskLists.Where(x => x.DueDate >= DateTime.Parse(dateFrom));
+                    }
+                }
+                if (!string.IsNullOrEmpty(dateTo))
+                {
+                    if (RegexHelper.IsValidDateFormat(dateTo, "yyyy-MM-dd"))
+                    {
+                        taskLists = taskLists.Where(x => x.DueDate <= DateTime.Parse(dateTo));
+                    }
+                }
+            }
+            else if (choice == "3")
+            {
+                Console.WriteLine("Filter By Status:");
+                Console.WriteLine("1: Pending");
+                Console.WriteLine("2: Completed");
+                Console.Write("Choice:");
+                string filterByStatus = Console.ReadLine();
+                if (filterByStatus == "1")
+                {
+                    taskLists = taskLists.Where(x => x.Status.Equals(MyTaskStatus.Pending));
+                }else if (filterByStatus == "2")
+                {
+                    taskLists = taskLists.Where(x => x.Status.Equals(MyTaskStatus.Completed));
+                }
+            }
+            Console.WriteLine(ToTable(taskLists));
+            return taskLists;
+        }
+        public IEnumerable<MyTask> OrderBy(IEnumerable<MyTask> taskLists)
+        {
+            Console.WriteLine("Order By:");
+            Console.WriteLine("1: Task Name");
+            Console.WriteLine("2: Due Date");
+            Console.WriteLine("3: Status");
+            Console.Write("Choice:");
+            string orderChoice = Console.ReadLine();
+            Console.WriteLine("Asc or Desc:");
+            Console.WriteLine("1: Asc");
+            Console.WriteLine("2: Desc");
+            string ascOrDesc = Console.ReadLine();
+            if (orderChoice == "1")
+            {
+                if (ascOrDesc == "1")
+                {
+                    taskLists = taskLists.OrderBy(x => x.TaskName);
+                }
+                else
+                {
+                    taskLists = taskLists.OrderByDescending(x => x.TaskName);
+                }
+            }else if (orderChoice == "2")
+            {
+                if (ascOrDesc == "1")
+                {
+                    taskLists = taskLists.OrderBy(x => x.DueDate);
+                }
+                else
+                {
+                    taskLists = taskLists.OrderByDescending(x => x.DueDate);
+                }
+            }
+            else if (orderChoice == "3")
+            {
+                if (ascOrDesc == "1")
+                {
+                    taskLists = taskLists.OrderBy(x => x.Status);
+                }
+                else
+                {
+                    taskLists = taskLists.OrderByDescending(x => x.Status);
+                }
+            }
+            Console.WriteLine(ToTable(taskLists));
+            return taskLists;
         }
     }
 }
